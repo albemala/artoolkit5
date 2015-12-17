@@ -57,6 +57,7 @@ import android.opengl.GLSurfaceView.Renderer;
 //import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,7 +81,7 @@ import android.widget.Toast;
  * 
  */
 
-public abstract class ARActivity extends Activity implements CameraEventListener {
+public abstract class ARActivity extends AppCompatActivity implements CameraEventListener {
 
 	/**
 	 * Android logging tag for this class.
@@ -111,23 +112,24 @@ public abstract class ARActivity extends Activity implements CameraEventListener
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-       
-        // This needs to be done just only the very first time the application is run,
-        // or whenever a new preference is added (e.g. after an application upgrade).
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-        
-        // Correctly configures the activity window for running AR in a layer
-        // on top of the camera preview. This includes entering 
-        // fullscreen landscape mode and enabling transparency. 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().setFormat(PixelFormat.TRANSLUCENT);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		// This needs to be done just only the very first time the application is run,
+		// or whenever a new preference is added (e.g. after an application upgrade).
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-        AndroidUtils.reportDisplayInformation(this);
-    }
+		// Correctly configures the activity window for running AR in a layer
+		// on top of the camera preview. This includes entering
+		// fullscreen landscape mode and enabling transparency.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFormat(PixelFormat.TRANSLUCENT);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		// when using AppCompat library, it's necessary to call requestWindowFeature() before super.onCreate()
+		// see: http://stackoverflow.com/a/4250209
+		super.onCreate(savedInstanceState);
+
+		AndroidUtils.reportDisplayInformation(this);
+	}
 	
     /**
      * Allows subclasses to supply a custom {@link Renderer}.
