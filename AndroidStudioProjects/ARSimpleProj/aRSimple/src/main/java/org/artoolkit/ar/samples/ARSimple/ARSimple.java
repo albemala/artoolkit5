@@ -49,36 +49,51 @@
 
 package org.artoolkit.ar.samples.ARSimple;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.widget.FrameLayout;
+
 import org.artoolkit.ar.base.ARActivity;
 import org.artoolkit.ar.base.rendering.ARRenderer;
-import org.artoolkit.ar.samples.ARSimple.R;
-import android.os.Bundle;
-import android.widget.FrameLayout;
 
 /**
  * A very simple example of extending ARActivity to create a new AR application.
  */
 public class ARSimple extends ARActivity {
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-	}
+    private static final int PERMISSIONS_REQUEST_CAMERA = 1;
 
-	/**
-	 * Provide our own SimpleRenderer.
-	 */
-	@Override
-	protected ARRenderer supplyRenderer() {
-		return new SimpleRenderer();
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
 
-	/**
-	 * Use the FrameLayout in this Activity's UI.
-	 */
-	@Override
-	protected FrameLayout supplyFrameLayout() {
-		return (FrameLayout)this.findViewById(R.id.mainLayout);
-	}
+        // on Android 6.0+ we have to check for camera permission
+        // following the new permissions model
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    PERMISSIONS_REQUEST_CAMERA);
+        }
+    }
+
+    /**
+     * Provide our own SimpleRenderer.
+     */
+    @Override
+    protected ARRenderer supplyRenderer() {
+        return new SimpleRenderer();
+    }
+
+    /**
+     * Use the FrameLayout in this Activity's UI.
+     */
+    @Override
+    protected FrameLayout supplyFrameLayout() {
+        return (FrameLayout) this.findViewById(R.id.mainLayout);
+    }
 }
